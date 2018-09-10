@@ -52,7 +52,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
-#include "KeepAliveLED.h"
+#include "Tasks.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -111,12 +111,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  xTaskCreate(blinkLed,								/*Task Pointer*/
-		  	  (const char* const) "KeepAliveLED",	/*Task Name*/
-			  configMINIMAL_STACK_SIZE,				/*Stack Depth*/
-			  0,									/*Parameters to pass to task*/
-			  2,									/*Task Priority*/
-			  0);									/*Pass handle to created task*/
+  startKeepAliveLED();
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
