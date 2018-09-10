@@ -15,9 +15,7 @@ void blinkLed(void *pvParameters)
 	TickType_t xDelay = 500 / portTICK_PERIOD_MS;
 	for(;;)
 	{
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
-		vTaskDelay(xDelay);
-		HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
+		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		vTaskDelay(xDelay);
 	}
 }
