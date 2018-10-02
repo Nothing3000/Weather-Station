@@ -52,22 +52,13 @@ typedef enum
 	WIFI_encWPA_WPA2_PSK = 4
 }wifienc_t;
 
-typedef struct
-{
-	UART_HandleTypeDef *uart;
-	wifimode_t	mode;
-	wifidhcp_t dhcpmode;
-	wifimux_t muxmode;
-	char ssid[32];
-	char pwd[64];
-}wifi_t;
-
-wifi_t *wifiInit(UART_HandleTypeDef *);
-void wifiSetMode(wifi_t *,wifimode_t);
-void wifiConnect(wifi_t *);
-void wifiDHCP(wifi_t *,wifidhcp_t);
-void wifiMux(wifi_t *,wifimux_t);
-void wifiConfigAP(wifi_t *,char *,char *,uint8_t,wifienc_t);
+void wifiInit(UART_HandleTypeDef *);
+void wifiSetMode(wifimode_t);
+void wifiConnect();
+void wifiDHCP(wifidhcp_t);
+void wifiMux(wifimux_t);
+void wifiConfigAP(char *,char *,uint8_t,wifienc_t);
+void wifiReset();
 
 
 #endif /* ESP8266AT_H_ */

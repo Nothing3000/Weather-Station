@@ -11,12 +11,14 @@
 
 void wifiMain(void *pvParameters)
 {
-	wifi_t *wifi = wifiInit((UART_HandleTypeDef *) pvParameters);
-	wifiSetMode(wifi,WIFI_hybrid);
-	wifiConfigAP(wifi,"SpeklappenFi","jemoederisdik",3,WIFI_encWPA_PSK);
+	wifiInit((UART_HandleTypeDef *) pvParameters);
+	wifiReset();
+	vTaskDelay(1000);
+	wifiSetMode(WIFI_softAP);
+	wifiConfigAP("Weather","jemoederisdik",3,WIFI_encWPA2_PSK);
+	wifiMux(WIFI_muxEnabled);
 	for(;;)
 	{
 
-		vTaskDelay(2000);
 	}
 }
