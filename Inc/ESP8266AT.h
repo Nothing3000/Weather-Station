@@ -58,6 +58,8 @@ void wifiConnect();
 void wifiDHCP(wifidhcp_t);
 void wifiMux(wifimux_t);
 void wifiConfigAP(char *,char *,uint8_t,wifienc_t);
+void wifiStartServer(int);
+void wifiSend(char *);
 void wifiReset();
 
 

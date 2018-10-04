@@ -8,6 +8,6 @@
 #ifndef WIFISERVER_H_
 #define WIFISERVER_H_
 
-void wifiMain(void *);
+void wifiAPMode(void *);
 
 #endif /* WIFISERVER_H_ */

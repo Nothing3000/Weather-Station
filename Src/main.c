@@ -127,12 +127,13 @@ int main(void)
   			  2,										/*Task Priority*/
   			  0);
 
-  xTaskCreate(wifiMain,
+  xTaskCreate(wifiAPMode,
 		  	  (const char* const) "WifiServer",
 			  configMINIMAL_STACK_SIZE,
 			  &huart1,
 			  2,
 			  0);
+
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
