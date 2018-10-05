@@ -53,7 +53,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
-#include "KeepAliveLED.h"
+#include "Tasks.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -117,6 +117,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
+
   xTaskCreate(blinkLed,								/*Task Pointer*/
 		  	  (const char* const) "KeepAliveLED",	/*Task Name*/
 			  configMINIMAL_STACK_SIZE,				/*Stack Depth*/
