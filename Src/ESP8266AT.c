@@ -16,11 +16,11 @@
 
 static UART_HandleTypeDef * wifiUart;
 
-static void flush()
+/*static void flush()
 {
 	uint8_t ch[1];
 	while(HAL_UART_Receive(wifiUart, ch, 1, TIMEOUT) == HAL_OK);
-}
+}*/
 
 /*static int sendChar(char *data)
 {
@@ -79,6 +79,11 @@ void wifiSetMode(wifimode_t mode)
 	printf("AT+CWMODE=%d\r\n",mode);
 }
 
+void wifiConfigStation(char *ssid, char *pwd)
+{
+	printf("AT+CWJAP=\"%s\",\"%s\"\r\n",ssid,pwd);
+}
+
 void wifiDHCP(wifidhcp_t dhcpmode)
 {
 	/*char commandStr[100];
@@ -97,10 +102,15 @@ void wifiMux(wifimux_t muxmode)
 
 void wifiConfigAP(char *ssid, char *pwd, uint8_t ch, wifienc_t enc)
 {
-	/*char commandStr[500];
+	/*char commandStr[500]P;
 	sprintf(commandStr,"AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n",ssid,pwd,ch,enc);
 	sendCommand(commandStr);*/
 	printf("AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n",ssid,pwd,ch,enc);
+}
+
+void wifiConnect(int id,char *ip,int port)
+{
+	printf("AT+CIPSTART=%d,\"TCP\",\"%s\",\"%d\"",id,ip,port);
 }
 
 void wifiStartServer(int port)
@@ -111,9 +121,9 @@ void wifiStartServer(int port)
 	printf("AT+CIPSERVER=1,%d\r\n",port);
 }
 
-void wifiSend(const int *sensorVals)
+void wifiSend(int id,const int *sensorVals)
 {
-	printf("AT+CIPSEND=0,%d\r\n",36);
+	printf("AT+CIPSEND=%d,%d\r\n",id,36);
 	vTaskDelay(100);
 	printf("{\"temperature\": %d, \"humidity\": %d}\n",sensorVals[0],sensorVals[1]);
 }

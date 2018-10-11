@@ -21,10 +21,10 @@ int I2CGetTemperature()
 
 	buffer[0]=0xE3;									        //Trigger Temperature measurement  0xE3
 	HAL_I2C_Master_Transmit(hi2c1,0x40<<1,buffer,1,100);  	//Device address 0x40 in the datasheet is shifted 1-bit to the left.
-	//vTaskDelay(20);											//2 bytes are transmitting to the slave: buffer[0] and buffer[1]
+	//vTaskDelay(20);									//2 bytes are transmitting to the slave: buffer[0] and buffer[1]
 	HAL_I2C_Master_Receive(hi2c1,0x40<<1,buffer,2,100);	    //Receive 2 bytes, store into buffer[0] and buffer[1]
 	rawT = buffer[0]<<8 | buffer[1]; 							//Combine 2 8-bit into 1 16bit, buffer[0] : MSB data and buffer[1] : LSB data
-	return ((float)rawT/65536)*175.72 -46.85;					//Raw sensor numbers converted to temperature
+	return (int)((((float)rawT/65536.0)*175.72-46.85)+0.5);					//Raw sensor numbers converted to temperature
 }
 
 int I2CGetHumidity()
@@ -37,5 +37,5 @@ int I2CGetHumidity()
 	//vTaskDelay(20);
 	HAL_I2C_Master_Receive(hi2c1,0x40<<1,buffer,2,100);
 	rawH = buffer[0]<<8 | buffer[1]; 							//Combine 2 8-bit into 1 16bit again
-	return ((float)rawH/65536)*125.0-6;							//Raw sensor numbers converted to humidity
+	return (int)((((float)rawH/65536.0)*125.0-6)+0.5);							//Raw sensor numbers converted to humidity
 }
