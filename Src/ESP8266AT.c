@@ -111,15 +111,11 @@ void wifiStartServer(int port)
 	printf("AT+CIPSERVER=1,%d\r\n",port);
 }
 
-void wifiSend(char * sendStr)
+void wifiSend(const int *sensorVals)
 {
-	/*char commandStr[100];
-	sprintf(commandStr,"AT+CIPSEND=0,%d\r\n",strlen(sendStr));
-	sendCommand(commandStr);
-	sendCommand(sendStr);*/
-	printf("AT+CIPSEND=0,%d\r\n",strlen(sendStr));
+	printf("AT+CIPSEND=0,%d\r\n",36);
 	vTaskDelay(100);
-	printf("%s",sendStr);
+	printf("{\"temperature\": %d, \"humidity\": %d}\n",sensorVals[0],sensorVals[1]);
 }
 
 void wifiReset()

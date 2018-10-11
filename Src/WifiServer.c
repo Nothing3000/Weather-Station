@@ -6,17 +6,28 @@
  */
 
 #include "WifiServer.h"
-#include "ESP8266AT.h"
+
+#include <stdlib.h>
+#include <string.h>
 #include "cmsis_os.h"
+
+#include "ESP8266AT.h"
+#include "I2CSensor.h"
 
 #define SSID "Weather"
 #define PASSWORD "password"
 
-void wifiAPMode(void *pvParameters)
+void wifiAPMode(void *pvParameters) //pvParameters[0] == HUART2 pvParameters[1] == I2C
 {
-	int temperature = 25;
-	int humidity = 55;
-	wifiInit((UART_HandleTypeDef *) pvParameters);
+	int sensorVals[2] = {0,0};
+	UART_HandleTypeDef *uart;
+	I2C_HandleTypeDef *i2c;
+
+	uart = (UART_HandleTypeDef *)((void **) pvParameters)[0];
+	i2c = (I2C_HandleTypeDef *)((void **) pvParameters)[1];
+
+	I2CSensorInit(i2c);
+	wifiInit(uart);
 	wifiReset();
 	vTaskDelay(1000);
 	wifiMux(WIFI_muxEnabled);
@@ -29,11 +40,10 @@ void wifiAPMode(void *pvParameters)
 	vTaskDelay(10);
 	for(;;)
 	{
-		wifiSend("{\"temperature\": 20, \"humidity\": 55}\n");
-		vTaskDelay(3000);
-		wifiSend("{\"temperature\": 23, \"humidity\": 51}\n");
-		vTaskDelay(3000);
-		wifiSend("{\"temperature\": -1, \"humidity\": 57}\n");
+		sensorVals[0] = I2CGetTemperature();
+		sensorVals[1] = I2CGetHumidity();
+		wifiSend(sensorVals);
 		vTaskDelay(3000);
 	}
 }
+//{"temperature": 25, "humidity": 55}

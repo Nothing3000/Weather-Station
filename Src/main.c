@@ -96,7 +96,9 @@ void StartDefaultTask(void const * argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	void * wifiServerParams[2];
+	((UART_HandleTypeDef **)wifiServerParams)[0] = &huart1;
+	((I2C_HandleTypeDef **)wifiServerParams)[1] = &hi2c1;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -132,7 +134,7 @@ int main(void)
   xTaskCreate(wifiAPMode,
 		  	  (const char* const) "WifiServer",
 			  configMINIMAL_STACK_SIZE,
-			  &huart1,
+			  wifiServerParams,
 			  2,
 			  0);
 
