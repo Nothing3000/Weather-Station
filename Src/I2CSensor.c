@@ -6,7 +6,6 @@
  */
 
 #include <I2CSensor.h>
-#include <math.h>
 #include <cmsis_os.h>
 
 static I2C_HandleTypeDef *hi2c1;

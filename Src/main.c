@@ -138,12 +138,6 @@ int main(void)
 			  2,
 			  0);
 
-  xTaskCreate(aanroeper,							/*Task Pointer*/
-		  	  (const char* const) "aanroeper",		/*Task Name*/
-			  configMINIMAL_STACK_SIZE,				/*Stack Depth*/
-			  &hi2c1,								/*Parameters to pass to task*/
-			  2,									/*Task Priority*/
-			  0);									/*Pass handle to created task*/
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
