@@ -22,7 +22,7 @@
 
 #define SERVERIP "192.168.1.50"
 
-void wifiAPMode(void *pvParameters) //pvParameters[0] == HUART2 pvParameters[1] == I2C
+void wifiAPMode(void *pvParameters) //pvParameters[0] == &HUART2 pvParameters[1] == &I2C
 {
 	int sensorVals[2] = {0,0};
 	UART_HandleTypeDef *uart;

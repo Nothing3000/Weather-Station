@@ -37,5 +37,5 @@ int I2CGetHumidity()
 	//vTaskDelay(20);
 	HAL_I2C_Master_Receive(hi2c1,0x40<<1,buffer,2,100);
 	rawH = buffer[0]<<8 | buffer[1]; 							//Combine 2 8-bit into 1 16bit again
-	return (int)((((float)rawH/65536.0)*125.0-6)+0.5);							//Raw sensor numbers converted to humidity
+	return (int)((((float)rawH/65536.0)*125.0-6.0)+0.5);							//Raw sensor numbers converted to humidity
 }
