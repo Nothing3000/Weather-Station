@@ -42,7 +42,7 @@ int I2CGetHumidity()
 	return ((float)rawH/65536)*125.0-6;							//Raw sensor numbers converted to humidity
 }
 
-int Luchtdruk(){
+int I2CGetPressure(){
 	unsigned char buffer[4];
 	unsigned int Pressure;
 
@@ -74,13 +74,4 @@ int Luchtdruk(){
 	Pressure = buffer[0]<<12 | buffer[0] << 4 | buffer[0];
 
 	return Pressure;
-}
-
-void aanroeper(void *pvParameters){
-	TemperatuurInit(pvParameters);
-
-	while(1){
-		Luchtdruk();
-		vTaskDelay(3000);
-	}
 }
