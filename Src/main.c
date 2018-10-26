@@ -53,12 +53,14 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
+#include "WifiServer.h"
 #include "KeepAliveLED.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 osThreadId defaultTaskHandle;
@@ -72,8 +74,9 @@ osThreadId defaultTaskHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_USART2_UART_Init(void);
+static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -93,7 +96,9 @@ void StartDefaultTask(void const * argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	void * wifiServerParams[2];
+	((UART_HandleTypeDef **)wifiServerParams)[0] = &huart1;
+	((I2C_HandleTypeDef **)wifiServerParams)[1] = &hi2c1;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -114,15 +119,24 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_USART2_UART_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+
   xTaskCreate(blinkLed,								/*Task Pointer*/
-		  	  (const char* const) "KeepAliveLED",	/*Task Name*/
+		  	  (const char* const) "KeepAliveLED",		/*Task Name*/
 			  configMINIMAL_STACK_SIZE,				/*Stack Depth*/
-			  0,									/*Parameters to pass to task*/
-			  2,									/*Task Priority*/
-			  0);									/*Pass handle to created task*/
+			  0,										/*Parameters to pass to task*/
+  			  2,										/*Task Priority*/
+  			  0);
+
+  xTaskCreate(wifiAPMode,
+		  	  (const char* const) "WifiServer",
+			  configMINIMAL_STACK_SIZE,
+			  wifiServerParams,
+			  2,
+			  0);
 
   xTaskCreate(aanroeper,							/*Task Pointer*/
 		  	  (const char* const) "aanroeper",		/*Task Name*/
@@ -214,7 +228,8 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_I2C1;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
   PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
@@ -267,12 +282,33 @@ static void MX_I2C1_Init(void)
 
 }
 
+/* USART1 init function */
+static void MX_USART1_UART_Init(void)
+{
+
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* USART2 init function */
 static void MX_USART2_UART_Init(void)
 {
 
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 38400;
+  huart2.Init.BaudRate = 115200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -331,11 +367,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA0 PA1 PA4 PA6 
-                           PA7 PA8 PA9 PA10 
-                           PA11 PA12 PA15 */
+                           PA7 PA8 PA11 PA12 
+                           PA15 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_6 
-                          |GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10 
-                          |GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_15;
+                          |GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_11|GPIO_PIN_12 
+                          |GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);

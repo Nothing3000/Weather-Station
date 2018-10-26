@@ -3,9 +3,9 @@
 
 #include "stm32f0xx_hal.h"
 
-void TemperatuurInit();
-int Temperatuur();
-int Luchtvochtigheid();
+void I2CSensorInit(I2C_HandleTypeDef *);
+int I2CGetTemperature();
+int I2CGetHumidity();
 int Luchtdruk();
 void aanroeper(void *);
 
