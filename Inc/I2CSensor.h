@@ -6,5 +6,6 @@
 void I2CSensorInit(I2C_HandleTypeDef *);
 int I2CGetTemperature();
 int I2CGetHumidity();
+int I2CGetPressure();
 
 #endif /* I2CSENSOR_H_ */

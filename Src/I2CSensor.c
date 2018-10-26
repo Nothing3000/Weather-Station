@@ -6,6 +6,7 @@
  */
 
 #include <I2CSensor.h>
+#include <cmsis_os.h>
 
 static I2C_HandleTypeDef *hi2c1;
 
@@ -38,4 +39,38 @@ int I2CGetHumidity()
 	HAL_I2C_Master_Receive(hi2c1,0x40<<1,buffer,2,100);
 	rawH = buffer[0]<<8 | buffer[1]; 							//Combine 2 8-bit into 1 16bit again
 	return (int)((((float)rawH/65536.0)*125.0-6.0)+0.5);							//Raw sensor numbers converted to humidity
+}
+
+int I2CGetPressure(){
+	unsigned char buffer[4];
+	unsigned int Pressure;
+
+
+	buffer[0] = 0xB8;
+	HAL_I2C_Mem_Write(hi2c1, 0xC0<<1, 0x26, I2C_MEMADD_SIZE_8BIT, buffer, 1, 100);
+	vTaskDelay(20);
+
+	buffer[0] = 0x07;
+	HAL_I2C_Mem_Write(hi2c1, 0xC0<<1, 0x13, I2C_MEMADD_SIZE_8BIT, buffer, 1, 100);
+	vTaskDelay(20);
+
+	buffer[0] = 0xB9;
+	HAL_I2C_Mem_Write(hi2c1, 0xC0<<1, 0x26, I2C_MEMADD_SIZE_8BIT, buffer, 1, 100);
+	vTaskDelay(100);
+
+	buffer[0] = 0;
+	HAL_I2C_Mem_Read(hi2c1, 0xC1<<1, 0x00, I2C_MEMADD_SIZE_8BIT, buffer, 1, 100);
+	vTaskDelay(20);
+
+	HAL_I2C_Mem_Read(hi2c1, 0xC1<<1, 0x01, I2C_MEMADD_SIZE_8BIT, &buffer[0], 1, 100);
+	vTaskDelay(20);
+
+	HAL_I2C_Mem_Read(hi2c1, 0xC1<<1, 0x02, I2C_MEMADD_SIZE_8BIT, &buffer[1], 1, 100);
+	vTaskDelay(20);
+
+	HAL_I2C_Mem_Read(hi2c1, 0xC1<<1, 0x03, I2C_MEMADD_SIZE_8BIT, &buffer[2], 1, 100);
+
+	Pressure = buffer[0]<<12 | buffer[0] << 4 | buffer[0];
+
+	return Pressure;
 }
