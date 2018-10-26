@@ -6,5 +6,7 @@
 void TemperatuurInit();
 int Temperatuur();
 int Luchtvochtigheid();
+int Luchtdruk();
+void aanroeper(void *);
 
 #endif /* I2CSENSOR_H_ */
