@@ -54,13 +54,14 @@ typedef enum
 
 void wifiInit(UART_HandleTypeDef *);
 void wifiSetMode(wifimode_t);
+void wifiGetInfo();
 void wifiConfigStation(char *, char *);
 void wifiDHCP(wifidhcp_t);
 void wifiMux(wifimux_t);
 void wifiConfigAP(char *,char *,uint8_t,wifienc_t);
-void wifiConnect(int,char *,int);
-void wifiStartServer(int);
-void wifiSend(int,const int *);
+void wifiConnect(uint8_t,char *,uint16_t);
+void wifiStartServer(uint16_t);
+void wifiSendStr(uint8_t,const char *);
 void wifiReset();
 
 

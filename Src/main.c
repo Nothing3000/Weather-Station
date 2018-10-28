@@ -130,7 +130,7 @@ int main(void)
   			  2,										/*Task Priority*/
   			  0);
 
-  xTaskCreate(wifiAPMode,
+  xTaskCreate(wifiHybridMode,
 		  	  (const char* const) "WifiServer",
 			  configMINIMAL_STACK_SIZE,
 			  wifiServerParams,

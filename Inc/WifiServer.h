@@ -9,6 +9,6 @@
 #define WIFISERVER_H_
 
 void wifiAPMode(void *);
-void createSendStr(char *);
+void wifiHybridMode(void *);
 
 #endif /* WIFISERVER_H_ */
