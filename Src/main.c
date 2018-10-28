@@ -47,7 +47,6 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include <I2CSensor.h>
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "cmsis_os.h"
@@ -67,7 +66,6 @@ osThreadId defaultTaskHandle;
 
 
 /* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
 
 /* USER CODE END PV */
 
@@ -80,7 +78,6 @@ static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
 
 /* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE END PFP */
 
@@ -131,7 +128,7 @@ int main(void)
   			  2,										/*Task Priority*/
   			  0);
 
-  xTaskCreate(wifiAPMode,
+  xTaskCreate(wifiHybridMode,
 		  	  (const char* const) "WifiServer",
 			  configMINIMAL_STACK_SIZE,
 			  wifiServerParams,

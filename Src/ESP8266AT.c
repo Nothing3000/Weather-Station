@@ -9,12 +9,11 @@
 #include "cmsis_os.h"
 #include <stdio.h>
 #include <string.h>
-#include  <errno.h>
-#include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
 
 #define TIMEOUT 100
 
 static UART_HandleTypeDef * wifiUart;
+static char commandStr[200];
 
 static void flush()
 {
@@ -22,48 +21,12 @@ static void flush()
 	while(HAL_UART_Receive(wifiUart, ch, 1, TIMEOUT) == HAL_OK);
 }
 
-/*static int sendChar(char *data)
+/*
+ * Send a null-terminated string with uart
+ */
+static void sendStr(const char *szText)
 {
-	HAL_StatusTypeDef status =
-			HAL_UART_Transmit(wifiUart, (uint8_t *)data, 1, TIMEOUT);
-	return (status == HAL_OK ? 1 : 0);
-}
-
-static void sendCommand(char * commandStr)
-{
-	for(;*commandStr; commandStr++)
-	{
-		while(!sendChar(commandStr));
-	}
-}*/
-
-int _write(int file, char *data, int len)
-{
-   if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
-   {
-      errno = EBADF;
-      return -1;
-   }
-
-   // arbitrary timeout 1000
-   HAL_StatusTypeDef status =
-      HAL_UART_Transmit(wifiUart, (uint8_t*)data, len, TIMEOUT);
-
-   // return # of bytes written - as best we can tell
-   return (status == HAL_OK ? len : 0);
-}
-
-int _read(int file, char *data, int len)
-{
-	if (file != STDIN_FILENO)
-	{
-		errno = EBADF;
-		return 0;
-	}
-	HAL_StatusTypeDef status =
-			HAL_UART_Receive(wifiUart, (uint8_t *)data, 1, TIMEOUT);
-
-	return (status == HAL_OK ? 1 : 0);
+	HAL_UART_Transmit(wifiUart, (uint8_t*)szText, strlen(szText), TIMEOUT);
 }
 
 void wifiInit(UART_HandleTypeDef *huart)
@@ -73,55 +36,67 @@ void wifiInit(UART_HandleTypeDef *huart)
 
 void wifiSetMode(wifimode_t mode)
 {
-	/*char commandStr[100];
 	sprintf(commandStr,"AT+CWMODE=%d\r\n",mode);
-	sendCommand(commandStr);*/
-	printf("AT+CWMODE=%d\r\n",mode);
+	sendStr(commandStr);
+	//printf("AT+CWMODE=%d\r\n",mode);
+}
+
+void wifiGetInfo()
+{
+	sprintf(commandStr,"AT+CIFSR\r\n");
+	sendStr(commandStr);
+}
+
+void wifiConfigStation(const char *ssid, const char *pwd)
+{
+	sprintf(commandStr,"AT+CWJAP=\"%s\",\"%s\"\r\n",ssid,pwd);
+	sendStr(commandStr);
 }
 
 void wifiDHCP(wifidhcp_t dhcpmode)
 {
-	/*char commandStr[100];
 	sprintf(commandStr,"AT+CWDHCP=%d\r\n",dhcpmode);
-	sendCommand(commandStr);*/
-	printf("AT+CWDHCP=%d\r\n",dhcpmode);
+	sendStr(commandStr);
 }
 
 void wifiMux(wifimux_t muxmode)
 {
-	/*char commandStr[100];
 	sprintf(commandStr,"AT+CIPMUX=%d\r\n",muxmode);
-	sendCommand(commandStr);*/
-	printf("AT+CIPMUX=%d\r\n",muxmode);
+	sendStr(commandStr);
 }
 
-void wifiConfigAP(char *ssid, char *pwd, uint8_t ch, wifienc_t enc)
+void wifiConfigAP(const char *ssid, const char *pwd, uint8_t ch, wifienc_t enc)
 {
-	/*char commandStr[500];
 	sprintf(commandStr,"AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n",ssid,pwd,ch,enc);
-	sendCommand(commandStr);*/
-	printf("AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n",ssid,pwd,ch,enc);
+	sendStr(commandStr);
 }
 
-void wifiStartServer(int port)
+void wifiConnect(uint8_t id,const char *ip,uint16_t port)
 {
-	/*char commandStr[100];
+	sprintf(commandStr,"AT+CIPSTART=%d,\"TCP\",\"%s\",%d\r\n",id,ip,port);
+	sendStr(commandStr);
+}
+
+void wifiStartServer(uint16_t port)
+{
 	sprintf(commandStr, "AT+CIPSERVER=1,%d\r\n",port);
-	sendCommand(commandStr);*/
-	printf("AT+CIPSERVER=1,%d\r\n",port);
+	sendStr(commandStr);
+
 }
 
-void wifiSend(const int *sensorVals)
+void wifiSendStr(uint8_t id,const char *szText)
 {
-	printf("AT+CIPSEND=0,%d\r\n",36);
-	vTaskDelay(100);
-	printf("{\"temperature\": %d, \"humidity\": %d}\n",sensorVals[0],sensorVals[1]);
+	sprintf(commandStr,"AT+CIPSEND=%d,%d\r\n",id,strlen(szText)+1);
+	sendStr(commandStr);
+	vTaskDelay(50);
+	sendStr(szText);
+	sendStr("\n");
+
 }
 
 void wifiReset()
 {
-	//sendCommand("AT+RST\r\n");
-	printf("AT+RST\r\n");
-	//printf("ATE0\r\n");
-	//flush();
+	flush();
+	sendStr("\r\n\r\n");
+	sendStr("AT+RST\r\n");
 }
