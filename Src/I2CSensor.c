@@ -25,7 +25,7 @@ int16_t I2CGetTemperature()
 	//vTaskDelay(20);									//2 bytes are transmitting to the slave: buffer[0] and buffer[1]
 	HAL_I2C_Master_Receive(hi2c1,0x40<<1,buffer,2,100);	    //Receive 2 bytes, store into buffer[0] and buffer[1]
 	rawT = buffer[0]<<8 | buffer[1]; 							//Combine 2 8-bit into 1 16bit, buffer[0] : MSB data and buffer[1] : LSB data
-	return ((rawT*176)/65536)-46;					//Raw sensor numbers converted to temperature
+	return ((rawT*176)/65536)-48;					//Raw sensor numbers converted to temperature
 }
 
 uint16_t I2CGetHumidity()

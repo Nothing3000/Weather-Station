@@ -5,21 +5,6 @@
  *      Author: marlon
  */
 
-/*
- * Wifi AT's to implement:
- * AT+CWMODE (Select WIFI mode) DONE
- * AT+CWSAP (Configure SoftAP)
- * AT+CWJAP (Connect to ap)
- * AT+CWDHCP (Set DHCP) DONE
- * AT+CIPSTA (Set ip station mode)
- * AT+CIPAP (Set ip softAP mode)
- *
- * TCP/IP AT's to implement:
- * AT+CIPSEND (Send data)
- * AT+CIPMUX (Enable multiple connections) DONE
- * AT+CIPSERVER (Configure server mode)
- *
- */
 #ifndef ESP8266AT_H_
 #define ESP8266AT_H_
 
@@ -55,11 +40,11 @@ typedef enum
 void wifiInit(UART_HandleTypeDef *);
 void wifiSetMode(wifimode_t);
 void wifiGetInfo();
-void wifiConfigStation(char *, char *);
+void wifiConfigStation(const char *,const char *);
 void wifiDHCP(wifidhcp_t);
 void wifiMux(wifimux_t);
-void wifiConfigAP(char *,char *,uint8_t,wifienc_t);
-void wifiConnect(uint8_t,char *,uint16_t);
+void wifiConfigAP(const char *,const char *,uint8_t,wifienc_t);
+void wifiConnect(uint8_t,const char *,uint16_t);
 void wifiStartServer(uint16_t);
 void wifiSendStr(uint8_t,const char *);
 void wifiReset();

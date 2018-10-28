@@ -9,8 +9,6 @@
 #include "cmsis_os.h"
 #include <stdio.h>
 #include <string.h>
-#include  <errno.h>
-#include  <sys/unistd.h> // STDOUT_FILENO, STDERR_FILENO
 
 #define TIMEOUT 100
 
@@ -23,23 +21,9 @@ static void flush()
 	while(HAL_UART_Receive(wifiUart, ch, 1, TIMEOUT) == HAL_OK);
 }
 
-/*int _write(int file, char *data, int len)
-{
-   if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
-   {
-      errno = EBADF;
-      return -1;
-   }
-
-   // arbitrary timeout 1000
-   HAL_StatusTypeDef status =
-      HAL_UART_Transmit(wifiUart, (uint8_t*)data, len, TIMEOUT);
-
-   // return # of bytes written - as best we can tell
-   return (status == HAL_OK ? len : 0);
-}turn (status == HAL_OK ? 1 : 0);
-}*/
-
+/*
+ * Send a null-terminated string with uart
+ */
 static void sendStr(const char *szText)
 {
 	HAL_UART_Transmit(wifiUart, (uint8_t*)szText, strlen(szText), TIMEOUT);
@@ -63,7 +47,7 @@ void wifiGetInfo()
 	sendStr(commandStr);
 }
 
-void wifiConfigStation(char *ssid, char *pwd)
+void wifiConfigStation(const char *ssid, const char *pwd)
 {
 	sprintf(commandStr,"AT+CWJAP=\"%s\",\"%s\"\r\n",ssid,pwd);
 	sendStr(commandStr);
@@ -81,13 +65,13 @@ void wifiMux(wifimux_t muxmode)
 	sendStr(commandStr);
 }
 
-void wifiConfigAP(char *ssid, char *pwd, uint8_t ch, wifienc_t enc)
+void wifiConfigAP(const char *ssid, const char *pwd, uint8_t ch, wifienc_t enc)
 {
 	sprintf(commandStr,"AT+CWSAP=\"%s\",\"%s\",%d,%d\r\n",ssid,pwd,ch,enc);
 	sendStr(commandStr);
 }
 
-void wifiConnect(uint8_t id,char *ip,uint16_t port)
+void wifiConnect(uint8_t id,const char *ip,uint16_t port)
 {
 	sprintf(commandStr,"AT+CIPSTART=%d,\"TCP\",\"%s\",%d\r\n",id,ip,port);
 	sendStr(commandStr);
