@@ -52,7 +52,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
-#include "WifiServer.h"
+#include "espTests.h"
 #include "KeepAliveLED.h"
 /* USER CODE END Includes */
 
@@ -128,10 +128,10 @@ int main(void)
   			  2,										/*Task Priority*/
   			  0);
 
-  xTaskCreate(wifiHybridMode,
+  xTaskCreate(testTask,
 		  	  (const char* const) "WifiServer",
 			  configMINIMAL_STACK_SIZE,
-			  wifiServerParams,
+			  &huart1,
 			  2,
 			  0);
 

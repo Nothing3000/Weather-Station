@@ -38,7 +38,6 @@ void wifiSetMode(wifimode_t mode)
 {
 	sprintf(commandStr,"AT+CWMODE=%d\r\n",mode);
 	sendStr(commandStr);
-	//printf("AT+CWMODE=%d\r\n",mode);
 }
 
 void wifiGetInfo()

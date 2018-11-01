@@ -73,7 +73,7 @@ static char *readSensorsJson()
 	temperature = I2CGetTemperature();
 	humidity = I2CGetHumidity();
 	pressure = I2CGetPressure();
-	sprintf(jsonBuffer,"{ \"temperature\":%d, \"humidity\":%d, \"pressure\":%d }",
+	sprintf(jsonBuffer,"{ \"temperature\":%d, \"humidity\":%d, \"pressure\":%ld }",
 			temperature,
 			humidity,
 			pressure);
@@ -156,15 +156,13 @@ void wifiHybridMode(void *pvParameters)
 
 	for(;;)
 	{
+		wifiConnect(3,STASERVERIP,STASERVERPORT); //Connect link1 to the http server
 		jsonStr = readSensorsJson();
 
 		wifiSendStr(0,jsonStr); //Keep sending data to link 0
-		vTaskDelay(10);
+		vTaskDelay(1000);
+		wifiSendStr(3,createHttpRequest(jsonStr)); //Send a http request with the jsonstring to the http server.
 
-		wifiConnect(1,STASERVERIP,STASERVERPORT); //Connect link1 to the http server
-		vTaskDelay(200);
-		wifiSendStr(1,createHttpRequest(jsonStr)); //Send a http request with the jsonstring to the http server.
-
-		vTaskDelay(3000);
+		vTaskDelay(2000);
 	}
 }
